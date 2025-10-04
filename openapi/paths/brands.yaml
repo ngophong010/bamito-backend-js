@@ -1,0 +1,82 @@
+paths:
+  # This path represents the collection of all brands
+  /brands:
+    get:
+      tags: [Brands]
+      summary: Get a list of all brands with pagination
+      description: Fetches a paginated list of all available brands. Can be filtered by name. Publicly accessible.
+      parameters:
+        - $ref: '../components/parameters.yaml#/limit'
+        - $ref: '../components/parameters.yaml#/page'
+        - $ref: '../components/parameters.yaml#/name'
+      responses:
+        '200':
+          description: A paginated list of brands.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/brand.yaml#/PaginatedBrands'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/error.yaml#/Error'
+
+    post:
+      tags: [Brands (Admin)]
+      summary: Create a new brand (Admin only)
+      description: Creates a new brand. This operation requires administrator privileges.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/brand.yaml#/BrandInput'
+      responses:
+        '201':
+          description: Brand created successfully.
+        '400':
+          description: Bad Request (e.g., validation error, duplicate brandId or brandName).
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden (User is not an admin).
+
+  # This path represents a single brand resource, identified by its numeric ID
+  /brands/{id}:
+    put:
+      tags: [Brands (Admin)]
+      summary: Update an existing brand (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/brand.yaml#/BrandInput'
+      responses:
+        '200':
+          description: Brand updated successfully.
+        '400':
+          description: Bad Request (Validation error or duplicate entry).
+        '404':
+          description: Brand not found.
+    
+    delete:
+      tags: [Brands (Admin)]
+      summary: Delete a brand (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      responses:
+        '200':
+          description: Brand deleted successfully.
+        '404':
+          description: Brand not found.
