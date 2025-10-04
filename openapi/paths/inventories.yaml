@@ -1,0 +1,75 @@
+paths:
+  /product-sizes:
+    get:
+      tags: [Inventory]
+      summary: Get stock levels for a specific product
+      description: Fetches a paginated list of all available sizes and their corresponding stock levels (quantity, sold) for a given product ID. This is a public endpoint used by the frontend to display which sizes are in or out of stock.
+      parameters:
+        - name: productId
+          in: query
+          required: true
+          description: The numeric primary key ID of the product to query for stock levels.
+          schema:
+            type: integer
+        - $ref: '../components/parameters.yaml#/limit'
+        - $ref: '../components/parameters.yaml#/page'
+      responses:
+        '200':
+          description: A paginated list of inventory entries for the product.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/product-size.yaml#/PaginatedInventorys'
+
+    post:
+      tags: [Inventory (Admin)]
+      summary: Add a new size to a product and set its stock (Admin only)
+      description: Creates a new inventory record, linking a product to a size and establishing its initial stock quantity.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/product-size.yaml#/InventoryInput'
+      responses:
+        '201':
+          description: Inventory entry created successfully.
+        '400':
+          description: Bad Request (Validation error or this product/size combo already exists).
+
+  /product-sizes/{id}:
+    put:
+      tags: [Inventory (Admin)]
+      summary: Update the stock quantity for a product size (Admin only)
+      description: Updates the available stock (quantity) for a specific inventory entry.
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/product-size.yaml#/UpdateInventoryInput'
+      responses:
+        '200':
+          description: Inventory updated successfully.
+        '404':
+          description: Product size entry not found.
+
+    delete:
+      tags: [Inventory (Admin)]
+      summary: Remove a size from a product (Admin only)
+      description: Deletes an inventory entry, effectively removing a size option from a product.
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      responses:
+        '200':
+          description: Inventory entry deleted successfully.
+        '404':
+          description: Product size entry not found.
