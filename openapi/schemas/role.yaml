@@ -1,0 +1,17 @@
+Role:
+  type: object
+  description: Represents a user role within the system.
+  properties:
+    id:
+      type: integer
+      description: The unique, numeric primary key of the role.
+      example: 1
+      readOnly: true
+    roleId:
+      type: string
+      description: The unique business ID for the role (e.g., 'R1', 'R2').
+      example: 'R1'
+    roleName:
+      type: string
+      description: The display name of the role.
+      example: 'Admin'
