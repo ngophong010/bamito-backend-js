@@ -1,0 +1,58 @@
+RegisterInput:
+  type: object
+  properties:
+    email:
+      type: string
+      format: email
+    password:
+      type: string
+      format: password
+      minLength: 6
+    userName:
+      type: string
+    roleId:
+      type: integer
+      description: The numeric ID of the role to assign (e.g., 2 for Customer).
+  required: [email, password, userName, roleId]
+
+LoginInput:
+  type: object
+  properties:
+    email:
+      type: string
+      format: email
+    password:
+      type: string
+  required: [email, password]
+
+PasswordResetInput:
+  type: object
+  properties:
+    email:
+      type: string
+      format: email
+    otpCode:
+      type: string
+      example: '123456'
+    password:
+      type: string
+      format: password
+      minLength: 6
+  required: [email, otpCode, password]
+
+AuthTokensResponse:
+  type: object
+  properties:
+    errCode:
+      type: integer
+    message:
+      type: string
+    data:
+      type: object
+      properties:
+        access_token:
+          type: string
+          format: jwt
+        refresh_token:
+          type: string
+          format: jwt
