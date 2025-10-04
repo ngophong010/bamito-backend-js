@@ -1,0 +1,84 @@
+# --- Path Parameters ---
+id:
+  name: id
+  in: path
+  required: true
+  description: The unique, numeric primary key of the resource.
+  schema:
+    type: integer
+    example: 123
+
+productId:
+  name: productId
+  in: path
+  required: true
+  description: The unique, human-readable business ID of the product.
+  schema:
+    type: string
+    example: 'VCL-YNX-100ZZ'
+
+# ... and so on for other path parameters like CategoryId, etc.
+categoryId:
+  name: categoryId
+  in: path
+  required: true
+  description: The numeric primary key of the product type (category).
+  schema:
+    type: integer
+    example: 1
+
+# --- Query Parameters ---
+limit:
+  name: limit
+  in: query
+  description: The number of items to return per page.
+  schema:
+    type: integer
+    default: 12
+
+page:
+  name: page
+  in: query
+  description: The page number to retrieve.
+  schema:
+    type: integer
+    default: 1
+
+name:
+  name: name
+  in: query
+  description: A search term to filter a resource by name (substring match).
+  schema:
+    type: string
+
+sort:
+  name: sort
+  in: query
+  description: The sort order for the results.
+  schema:
+    type: string
+    example: 'price,ASC'
+
+status:
+  name: status
+  in: query
+  description: The status code to filter by.
+  schema:
+    type: integer
+    example: 1
+    
+timeStart:
+  name: timeStart
+  in: query
+  description: The start date for a report in ISO 8601 format.
+  schema:
+    type: string
+    format: date-time
+
+timeEnd:
+  name: timeEnd
+  in: query
+  description: The end date for a report in ISO 8601 format.
+  schema:
+    type: string
+    format: date-time
