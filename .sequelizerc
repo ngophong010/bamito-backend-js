@@ -1,0 +1,11 @@
+const path = require('path');
+module.exports = {
+// Tell the CLI where your main config file is
+'config': path.resolve('src', 'config', 'config.js'),
+// Tell the CLI where to find your models
+'models-path': path.resolve('src', 'models'),
+// Tell the CLI where to find your seeders
+'seeders-path': path.resolve('src', 'seeders'),
+// Tell the CLI where to find your migrations
+'migrations-path': path.resolve('src', 'migrations'),
+};
