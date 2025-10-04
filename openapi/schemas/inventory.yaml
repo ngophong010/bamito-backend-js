@@ -1,0 +1,60 @@
+# The object the client sends to create a new inventory entry
+InventoryInput:
+  type: object
+  properties:
+    productId:
+      type: integer
+      description: The numeric primary key ID of the product.
+    sizeId:
+      type: integer
+      description: The numeric primary key ID of the size.
+    quantity:
+      type: integer
+      description: The initial stock quantity for this product/size combination.
+      minimum: 0
+  required:
+    - productId
+    - sizeId
+    - quantity
+
+# The object the client sends to update an inventory entry
+UpdateInventoryInput:
+  type: object
+  properties:
+    quantity:
+      type: integer
+      description: The new stock quantity for this product/size combination.
+      minimum: 0
+  required:
+    - quantity
+
+# The full inventory object returned by the API
+InventoryView:
+  type: object
+  properties:
+    id:
+      type: integer
+      readOnly: true
+    quantity:
+      type: integer
+      description: The current available stock for this specific product and size.
+    sold:
+      type: integer
+      description: The total number of units sold for this specific product and size.
+      readOnly: true
+    productData:
+      $ref: './product.yaml#/ProductSummary'
+    sizeData:
+      $ref: './size.yaml#/Size'
+
+# The shape of the response for the paginated GET endpoint
+PaginatedInventorys:
+  type: object
+  allOf:
+    - $ref: './shared.yaml#/PaginationInfo'
+    - type: object
+      properties:
+        Inventorys:
+          type: array
+          items:
+            $ref: '#/InventoryView'
