@@ -1,0 +1,121 @@
+# ===============================================================
+#  INPUT SCHEMA (What the client SENDS to the API)
+# ===============================================================
+ProductInput:
+  type: object
+  description: The data required to create or update a product.
+  properties:
+    productId:
+      type: string
+      description: The unique, human-readable business ID for the product.
+      example: 'VCL-YNX-100ZZ'
+    name:
+      type: string
+      example: 'Vợt Cầu Lông Yonex Astrox 100ZZ'
+    price:
+      type: integer
+      description: Price in the smallest currency unit (e.g., Đồng).
+      example: 4500000
+    discount:
+      type: integer
+      default: 0
+    descriptionContent:
+      type: string
+      description: The raw text or markdown description.
+    descriptionHTML:
+      type: string
+      description: The HTML version of the description.
+    brandId:
+      type: integer
+      description: The numeric primary key ID of the brand.
+      example: 1
+    categoryId:
+      type: integer
+      description: The numeric primary key ID of the product type.
+      example: 1
+  required:
+    - productId
+    - name
+    - price
+    - brandId
+    - categoryId
+
+# ===============================================================
+#  OUTPUT SCHEMAS (What the API SENDS back to the client)
+# ===============================================================
+
+# --- The concise view, used for lists and grids ---
+ProductSummary:
+  type: object
+  description: A summary of a product, used in lists.
+  properties:
+    id:
+      type: integer
+      description: The numeric primary key of the product.
+      readOnly: true
+    productId:
+      type: string
+    name:
+      type: string
+    price:
+      type: number
+    discount:
+      type: number
+    image:
+      type: string
+      format: url
+    averageRating:
+      type: number
+      format: float
+      description: The calculated average rating from user feedback.
+      example: 4.8
+      readOnly: true
+    brandData:
+      $ref: './brand.yaml#/Brand' # Reuses our existing Brand schema
+    categoryData:
+      $ref: './product-type.yaml#/Category' # Assumes you create a Category.yaml
+
+# --- The detailed view, used for the product detail page ---
+ProductDetail:
+  type: object
+  description: The full details of a single product.
+  # 'allOf' is a powerful tool. It means "this object has all the properties of ProductSummary, PLUS the following properties:"
+  allOf:
+    - $ref: '#/ProductSummary'
+    - type: object
+      properties:
+        descriptionHTML:
+          type: string
+        feedbackCount:
+          type: integer
+          description: The total number of feedbacks submitted for this product.
+          readOnly: true
+        Inventorys:
+          type: array
+          description: A list of available sizes and their stock levels.
+          items:
+            type: object
+            properties:
+              quantity:
+                type: integer
+                description: The current available stock for this size.
+              sold:
+                type: integer
+                description: The total number of units sold for this size.
+              sizeData:
+                $ref: './size.yaml#/Size' # Assumes you create a size.yaml
+
+# --- The standard wrapper for paginated product lists ---
+PaginatedProducts:
+  type: object
+  properties:
+    totalItems:
+      type: integer
+    totalPages:
+      type: integer
+    currentPage:
+      type: integer
+    products:
+      type: array
+      items:
+        $ref: '#/ProductSummary'
