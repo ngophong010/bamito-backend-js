@@ -1,0 +1,68 @@
+# The full Voucher object returned by the API
+Voucher:
+  type: object
+  properties:
+    id:
+      type: integer
+      readOnly: true
+    voucherId:
+      type: string
+      example: 'SALE50K'
+    image:
+      type: string
+      format: url
+    voucherPrice:
+      type: integer
+    quantity:
+      type: integer
+    timeStart:
+      type: string
+      format: date-time
+    timeEnd:
+      type: string
+      format: date-time
+
+# The object the client sends to create or update a Voucher
+VoucherInput:
+  type: object
+  properties:
+    voucherId:
+      type: string
+      example: 'SALE50K'
+    voucherPrice:
+      type: integer
+      example: 50000
+    quantity:
+      type: integer
+      example: 100
+    timeStart:
+      type: string
+      format: date-time
+      description: The start date in ISO 8601 format.
+      example: '2024-12-01T00:00:00Z'
+    timeEnd:
+      type: string
+      format: date-time
+      description: The end date in ISO 8601 format.
+      example: '2024-12-31T23:59:59Z'
+  required:
+    - voucherId
+    - voucherPrice
+    - quantity
+    - timeStart
+    - timeEnd
+
+# The shape of the response for the paginated GET endpoint
+PaginatedVouchers:
+  type: object
+  properties:
+    totalItems:
+      type: integer
+    totalPages:
+      type: integer
+    currentPage:
+      type: integer
+    vouchers:
+      type: array
+      items:
+        $ref: '#/Voucher'
