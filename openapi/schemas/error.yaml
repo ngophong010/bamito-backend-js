@@ -1,0 +1,29 @@
+Error:
+  type: object
+  description: A standard error response object.
+  properties:
+    message:
+      type: string
+      description: A human-readable description of the error.
+      example: 'Resource not found.'
+    errors:
+      type: array
+      description: An array of specific validation errors (used for 400 Bad Request responses).
+      items:
+        type: object
+        properties:
+          type:
+            type: string
+            example: 'field'
+          value:
+            type: string
+            example: 'not-an-email'
+          msg:
+            type: string
+            example: 'A valid email address is required'
+          path:
+            type: string
+            example: 'email'
+          location:
+            type: string
+            example: 'body'
