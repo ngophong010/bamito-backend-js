@@ -1,0 +1,27 @@
+# --- A generic success message for POST, PUT, DELETE responses ---
+SuccessMessage:
+  type: object
+  properties:
+    errCode:
+      type: integer
+      example: 0
+    message:
+      type: string
+      example: 'Operation completed successfully.'
+
+# --- A reusable object for pagination metadata ---
+PaginationInfo:
+  type: object
+  properties:
+    totalItems:
+      type: integer
+      description: The total number of items available for this query.
+      example: 153
+    totalPages:
+      type: integer
+      description: The total number of pages available.
+      example: 13
+    currentPage:
+      type: integer
+      description: The current page number being returned.
+      example: 1
