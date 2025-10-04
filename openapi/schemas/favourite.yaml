@@ -1,0 +1,9 @@
+# The object the client sends to add a favourite
+FavouriteInput:
+  type: object
+  properties:
+    productId:
+      type: integer
+      description: The numeric primary key ID of the product to add to favourites.
+  required:
+    - productId
