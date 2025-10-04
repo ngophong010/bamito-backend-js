@@ -1,0 +1,134 @@
+paths:
+  # --- User's Own Profile ---
+  /users/profile:
+    get:
+      tags: [Users (Profile)]
+      summary: Get the current user's profile
+      description: Fetches the complete profile information for the currently authenticated user.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: The user's detailed profile.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/user.yaml#/UserDetail'
+        '401':
+          description: Unauthorized.
+    put:
+      tags: [Users (Profile)]
+      summary: Update the current user's profile
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref: '../schemas/user.yaml#/UserInput'
+                - type: object
+                  properties:
+                    avatar:
+                      type: string
+                      format: binary
+      responses:
+        '200':
+          description: Profile updated successfully.
+        '400':
+          description: Bad Request (Validation error).
+
+  /users/profile/change-password:
+    put:
+      tags: [Users (Profile)]
+      summary: Change the current user's password
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/user.yaml#/PasswordChangeInput'
+      responses:
+        '200':
+          description: Password changed successfully.
+        '400':
+          description: Bad Request (e.g., current password incorrect).
+
+  # --- Admin Management of All Users ---
+  /users:
+    get:
+      tags: [Users (Admin)]
+      summary: Get a list of all users (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/limit'
+        - $ref: '../components/parameters.yaml#/page'
+        - $ref: '../components/parameters.yaml#/name'
+      responses:
+        '200':
+          description: A paginated list of users.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/user.yaml#/PaginatedUsers'
+
+    post:
+      tags: [Users (Admin)]
+      summary: Create a new user (Admin only)
+      security:
+        - BearerAuth: []
+      requestBody:
+        # Same as public registration
+        $ref: '../schemas/auth.yaml#/RegisterInput'
+      responses:
+        '201':
+          description: User created successfully.
+
+  # --- Admin Management of a Single User ---
+  /users/{id}:
+    get:
+      tags: [Users (Admin)]
+      summary: Get a single user by ID (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      responses:
+        '200':
+          description: The requested user's detailed profile.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/user.yaml#/UserDetail'
+        '404':
+          description: User not found.
+    put:
+      tags: [Users (Admin)]
+      summary: Update a user by ID (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      requestBody:
+        $ref: '#/paths/~1users~1profile/put/requestBody' # Reuse the profile update body
+      responses:
+        '200':
+          description: User updated successfully.
+        '404':
+          description: User not found.
+    delete:
+      tags: [Users (Admin)]
+      summary: Delete a user by ID (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      responses:
+        '200':
+          description: User deleted successfully.
+        '404':
+          description: User not found.
+          
