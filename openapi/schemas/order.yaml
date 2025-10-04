@@ -1,0 +1,151 @@
+# ===============================================================
+#  INPUT SCHEMA (What the client SENDS to the API to create an order)
+# ===============================================================
+OrderInput:
+  type: object
+  description: Data required from the frontend to create a new order. The userId is taken from the auth token and should not be sent.
+  properties:
+    totalPrice:
+      type: number
+      description: The final, client-calculated total price of the order. The server will validate this.
+      example: 4500000
+    payment:
+      type: string
+      description: The payment method chosen by the user.
+      example: 'Cash on Delivery'
+    deliveryAddress:
+      type: string
+      description: The full shipping address for the order.
+      example: '123 Đường ABC, Phường 4, Quận 5, TP. Hồ Chí Minh'
+    status:
+      type: integer
+      description: The initial status of the order (e.g., 1 for Pending).
+      example: 1
+    voucherId:
+      type: integer
+      description: The numeric primary key ID of the voucher being used (if any).
+      nullable: true
+      example: 7
+    cartItems:
+      type: array
+      description: A list of all items being purchased.
+      items:
+        type: object
+        properties:
+          productId:
+            type: integer
+          sizeId:
+            type: integer
+          quantity:
+            type: integer
+        required: [productId, sizeId, quantity]
+  required:
+    - totalPrice
+    - payment
+    - deliveryAddress
+    - cartItems
+
+# ===============================================================
+#  OUTPUT SCHEMAS (What the API SENDS back to the client)
+# ===============================================================
+
+# --- A single line item within a detailed order ---
+OrderLineItem:
+  type: object
+  description: Represents a single line item on an order receipt.
+  properties:
+    quantity:
+      type: integer
+    totalPrice:
+      type: number
+    statusFeedback:
+      type: integer
+      description: "0 = Not Reviewed, 1 = Reviewed"
+    productData:
+      # We reuse the ProductSummary because we don't need the full product detail here.
+      $ref: './product.yaml#/ProductSummary'
+    sizeData:
+      $ref: './size.yaml#/Size'
+
+# --- A concise view, used for order lists ---
+OrderSummary:
+  type: object
+  description: A brief summary of an order, used in lists.
+  properties:
+    id:
+      type: integer
+      readOnly: true
+    orderId:
+      type: string
+      description: The human-readable business ID for the order.
+      example: 'a9b8c7d6e5'
+    totalPrice:
+      type: number
+    status:
+      type: integer
+      description: "0: Cancelled, 1: Pending, 2: Shipped, 3: Delivered"
+    createdAt:
+      type: string
+      format: date-time
+
+# --- The detailed view, used for the single order detail page ---
+OrderDetail:
+  type: object
+  description: The full details of a single order.
+  allOf:
+    - $ref: '#/OrderSummary' # This inherits all properties from OrderSummary
+    - type: object
+      properties:
+        payment:
+          type: string
+        deliveryAddress:
+          type: string
+        userData:
+          type: object
+          properties:
+            userName:
+              type: string
+            phoneNumber:
+              type: string
+        voucherData:
+          $ref: './voucher.yaml#/Voucher' # Reuse the Voucher schema
+        orderItem:
+          type: array
+          description: A list of all line items in this order.
+          items:
+            $ref: '#/OrderLineItem'
+
+# --- The wrapper for paginated order lists ---
+PaginatedOrders:
+  type: object
+  allOf:
+    - $ref: './shared.yaml#/PaginationInfo' # Reuse the pagination wrapper
+    - type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/OrderSummary' # The list contains summaries, not full details
+
+# --- The shape of the admin dashboard statistics response ---
+Statistics:
+  type: object
+  description: A summary of key business metrics for the admin dashboard.
+  properties:
+    totalIncome:
+      type: number
+    totalOrder:
+      type: integer
+    totalProduct:
+      type: integer
+    allTotalOrder:
+      type: array
+      description: A breakdown of orders by their current status.
+      items:
+        type: object
+        properties:
+          label:
+            type: string
+            example: 'Hoàn tất'
+          quantity:
+            type: integer
