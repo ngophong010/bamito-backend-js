@@ -1,0 +1,125 @@
+paths:
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register a new user account
+      description: Creates a new user with a 'Customer' role. The account will be inactive until verified via the activation email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/RegisterInput'
+      responses:
+        '201':
+          description: Registration successful. An activation email has been sent.
+        '400':
+          description: Bad Request (Validation error, e.g., invalid email).
+        '409':
+          description: Conflict (Email is already in use).
+        '429':
+          description: Too Many Requests.
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Log in a user
+      description: Verifies user credentials and returns an access token and a refresh token in secure, httpOnly cookies.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/LoginInput'
+      responses:
+        '200':
+          description: Login successful. Cookies have been set.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/auth.yaml#/AuthTokensResponse'
+        '400':
+          description: Bad Request (Validation error).
+        '401':
+          description: Unauthorized (Incorrect password or account not activated).
+        '429':
+          description: Too Many Requests.
+
+  /auth/logout:
+    post:
+      tags: [Authentication]
+      summary: Log out the current user
+      description: Clears the authentication cookies, effectively logging the user out.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logout successful.
+        '401':
+          description: Unauthorized (No user was logged in).
+
+  /auth/refresh-token:
+    post:
+      tags: [Authentication]
+      summary: Refresh an access token
+      description: Uses a valid refresh token (from a cookie) to generate a new, short-lived access token and sets it in a new cookie.
+      responses:
+        '200':
+          description: Access token refreshed successfully.
+        '401':
+          description: Unauthorized (No refresh token provided).
+        '403':
+          description: Forbidden (Refresh token is invalid or expired).
+
+  /auth/activate:
+    get:
+      tags: [Authentication]
+      summary: Activate a user account
+      description: Activates a user's account using the token sent to their email. On success, redirects the user to the frontend login page.
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: A redirect to the frontend login page (on success) or a not-found page (on failure).
+
+  /auth/password/send-otp:
+    post:
+      tags: [Authentication]
+      summary: Send a password reset OTP
+      description: Sends a One-Time Password to the user's email to initiate a password reset.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: OTP sent successfully.
+        '404':
+          description: Email not found.
+
+  /auth/password/reset-with-otp:
+    put:
+      tags: [Authentication]
+      summary: Reset password using an OTP
+      description: Allows a user to set a new password after verifying their identity with an OTP.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/auth.yaml#/PasswordResetInput'
+      responses:
+        '200':
+          description: Password reset successfully.
+        '400':
+          description: Bad Request (Invalid OTP, expired OTP, or validation error).
