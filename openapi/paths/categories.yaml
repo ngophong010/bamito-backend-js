@@ -1,0 +1,97 @@
+paths:
+  /product-types:
+    get:
+      tags: [Product Types]
+      summary: Get a list of all product types
+      description: Fetches a list of all product types. Can be used with pagination for admin panels or without for displaying filters on the frontend.
+      parameters:
+        - $ref: '../components/parameters.yaml#/limit'
+        - $ref: '../components/parameters.yaml#/page'
+        - $ref: '../components/parameters.yaml#/name'
+        - name: pagination
+          in: query
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: A list of product types.
+          content:
+            application/json:
+              schema:
+                oneOf: # The response can be one of two shapes
+                  - $ref: '../schemas/product-type.yaml#/PaginatedCategorys'
+                  - type: array
+                    items:
+                      $ref: '../schemas/product-type.yaml#/Category'
+
+    post:
+      tags: [Product Types (Admin)]
+      summary: Create a new product type (Admin only)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/product-type.yaml#/CategoryInput'
+      responses:
+        '201':
+          description: Product type created successfully.
+        '400':
+          description: Bad Request (Validation error or duplicate entry).
+
+  /product-types/{id}:
+    put:
+      tags: [Product Types (Admin)]
+      summary: Update a product type (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/product-type.yaml#/CategoryInput'
+      responses:
+        '200':
+          description: Product type updated successfully.
+        '404':
+          description: Product type not found.
+
+    delete:
+      tags: [Product Types (Admin)]
+      summary: Delete a product type (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      responses:
+        '200':
+          description: Product type deleted successfully.
+        '404':
+          description: Product type not found.
+
+  /product-types/{categoryId}:
+    get:
+      tags: [Product Types]
+      summary: Get a single product type by its business ID
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 'RACKET'
+      responses:
+        '200':
+          description: The requested product type.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/product-type.yaml#/Category'
+        '404':
+          description: Product type not found.
