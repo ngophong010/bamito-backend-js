@@ -1,0 +1,147 @@
+paths:
+  /products:
+    get:
+      tags: [Products]
+      summary: Get a list of all products (paginated)
+      description: Fetches a paginated list of all available products. Can be filtered by name. Publicly accessible.
+      parameters:
+        - $ref: '../components/parameters.yaml#/limit'
+        - $ref: '../components/parameters.yaml#/page'
+        - $ref: '../components/parameters.yaml#/name'
+      responses:
+        '200':
+          description: A paginated list of products.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/product.yaml#/PaginatedProducts'
+
+    post:
+      tags: [Products (Admin)]
+      summary: Create a new product (Admin only)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data: # For file uploads
+            schema:
+              allOf:
+                - $ref: '../schemas/product.yaml#/ProductInput'
+                - type: object
+                  properties:
+                    image:
+                      type: string
+                      format: binary
+      responses:
+        '201':
+          description: Product created successfully.
+        '400':
+          description: Bad Request (Validation error or duplicate entry).
+        '403':
+          description: Forbidden (User is not an admin).
+
+  /products/{productId}:
+    get:
+      tags: [Products]
+      summary: Get a single product by its business ID
+      description: Fetches detailed information for a single product using its human-readable business ID (e.g., 'VCL-YNX-100ZZ').
+      parameters:
+        - $ref: '../components/parameters.yaml#/productId'
+      responses:
+        '200':
+          description: Detailed product information.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/product.yaml#/ProductDetail'
+        '404':
+          description: Product not found.
+
+  /products/{productId}/feedback:
+    get:
+      tags: [Products]
+      summary: Get all feedback for a specific product
+      parameters:
+        - $ref: '../components/parameters.yaml#/productId' # Assuming you use the business key here too
+      responses:
+        '200':
+          description: A list of feedback objects for the product.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../schemas/feedback.yaml#/FeedbackView'
+
+  /products/sale-off:
+    get:
+      tags: [Products]
+      summary: Get all products currently on sale (paginated)
+      parameters:
+        - $ref: '../components/parameters.yaml#/limit'
+        - $ref: '../components/parameters.yaml#/page'
+      responses:
+        '200':
+          description: A paginated list of products with a discount.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/product.yaml#/PaginatedProducts'
+
+  /products/types/{categoryId}:
+    get:
+      tags: [Products]
+      summary: Get all products for a specific product type
+      parameters:
+        - $ref: '../components/parameters.yaml#/categoryId'
+        - $ref: '../components/parameters.yaml#/limit'
+        - $ref: '../components/parameters.yaml#/page'
+      responses:
+        '200':
+          description: A paginated list of products for the given type.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/product.yaml#/PaginatedProducts'
+
+  /products/{id}:
+    put:
+      tags: [Products (Admin)]
+      summary: Update an existing product (Admin only)
+      description: Updates a product using its numeric primary key ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref: '../schemas/product.yaml#/ProductInput'
+                - type: object
+                  properties:
+                    image:
+                      type: string
+                      format: binary
+      responses:
+        '200':
+          description: Product updated successfully.
+        '404':
+          description: Product not found.
+
+    delete:
+      tags: [Products (Admin)]
+      summary: Delete a product (Admin only)
+      description: Deletes a product using its numeric primary key ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      responses:
+        '200':
+          description: Product deleted successfully.
+        '404':
+          description: Product not found.
