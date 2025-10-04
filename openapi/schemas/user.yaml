@@ -1,0 +1,76 @@
+UserInput:
+  type: object
+  properties:
+    userName:
+      type: string
+    email:
+      type: string
+      format: email
+    phoneNumber:
+      type: string
+    birthday:
+      type: string
+      format: date
+  required:
+    - userName
+    - email
+
+# A lightweight summary of a User (for listings, references, etc.)
+UserSummary:
+  type: object
+  properties:
+    id:
+      type: integer
+    userName:
+      type: string
+    email:
+      type: string
+    avatar:
+      type: string
+      format: uri
+    roleData:
+      $ref: "./role.yaml#/Role"
+
+# A detailed representation of a User
+UserDetail:
+  allOf:
+    - $ref: "#/UserSummary"
+    - type: object
+      properties:
+        phoneNumber:
+          type: string
+        birthday:
+          type: string
+          format: date
+        deliveryAddresses:
+          type: array
+          items:
+            $ref: "./address.yaml#/Address"
+
+# Input object for changing a password
+PasswordChangeInput:
+  type: object
+  properties:
+    currentPassword:
+      type: string
+    newPassword:
+      type: string
+      minLength: 6
+  required:
+    - currentPassword
+    - newPassword
+
+# Paginated User response for GET /users
+PaginatedUsers:
+  type: object
+  properties:
+    totalItems:
+      type: integer
+    totalPages:
+      type: integer
+    currentPage:
+      type: integer
+    users:
+      type: array
+      items:
+        $ref: '#/UserSummary'
