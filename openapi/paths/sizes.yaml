@@ -1,0 +1,76 @@
+paths:
+  /sizes:
+    get:
+      tags: [Sizes]
+      summary: Get a list of all sizes
+      description: Fetches a list of sizes. Can be paginated for admin panels or filtered by categoryId for frontend dropdowns.
+      parameters:
+        - $ref: '../components/parameters.yaml#/limit'
+        - $ref: '../components/parameters.yaml#/page'
+        - $ref: '../components/parameters.yaml#/name'
+        - name: categoryId
+          in: query
+          description: The numeric ID of a product type to filter sizes by.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of sizes.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '../schemas/size.yaml#/PaginatedSizes'
+                  - type: array
+                    items:
+                      $ref: '../schemas/size.yaml#/Size'
+
+    post:
+      tags: [Sizes (Admin)]
+      summary: Create a new size (Admin only)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/size.yaml#/SizeInput'
+      responses:
+        '201':
+          description: Size created successfully.
+        '400':
+          description: Bad Request (Validation error or duplicate entry).
+
+  /sizes/{id}:
+    put:
+      tags: [Sizes (Admin)]
+      summary: Update a size (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/size.yaml#/SizeInput'
+      responses:
+        '200':
+          description: Size updated successfully.
+        '404':
+          description: Size not found.
+
+    delete:
+      tags: [Sizes (Admin)]
+      summary: Delete a size (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      responses:
+        '200':
+          description: Size deleted successfully.
+        '404':
+          description: Size not found.
