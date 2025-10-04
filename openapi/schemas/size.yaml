@@ -1,0 +1,47 @@
+Size:
+  type: object
+  properties:
+    id:
+      type: integer
+      readOnly: true
+    sizeId:
+      type: string
+      example: 'SIZE-L'
+    sizeName:
+      type: string
+      example: 'Large'
+    categoryId:
+      type: integer
+      description: The numeric ID of the product type this size belongs to.
+
+# The object the client sends to create or update a Size
+SizeInput:
+  type: object
+  properties:
+    sizeId:
+      type: string
+      example: 'SIZE-L'
+    sizeName:
+      type: string
+      example: 'Large'
+    categoryId:
+      type: integer
+  required:
+    - sizeId
+    - sizeName
+    - categoryId
+
+# The shape of the response for the paginated GET endpoint
+PaginatedSizes:
+  type: object
+  properties:
+    totalItems:
+      type: integer
+    totalPages:
+      type: integer
+    currentPage:
+      type: integer
+    sizes:
+      type: array
+      items:
+        $ref: '#/Size'
