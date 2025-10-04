@@ -1,0 +1,52 @@
+# The object a client sends to create a new feedback
+FeedbackInput:
+  type: object
+  properties:
+    productId:
+      type: integer
+    orderId:
+      type: integer
+    sizeId:
+      type: integer
+    rating:
+      type: number
+      format: float
+      minimum: 1
+      maximum: 5
+    description:
+      type: string
+  required: [productId, orderId, sizeId, rating]
+
+# The object a client sends to update a feedback
+FeedbackUpdateInput:
+    type: object
+    properties:
+        rating:
+            type: number
+            format: float
+            minimum: 1
+            maximum: 5
+        description:
+            type: string
+
+# The full feedback object returned by the API
+FeedbackView:
+  type: object
+  properties:
+    id:
+      type: integer
+    rating:
+      type: number
+    description:
+      type: string
+    updatedAt:
+      type: string
+      format: date-time
+    userData: # The user who wrote the review
+      type: object
+      properties:
+        userName:
+          type: string
+        avatar:
+          type: string
+          format: url
