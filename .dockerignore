@@ -1,0 +1,6 @@
+# Ignore dependencies, logs, and local configuration files
+node_modules
+npm-debug.log
+.env
+.DS_Store
+.git
