@@ -1,0 +1,88 @@
+paths:
+  /vouchers:
+    get:
+      tags: [Vouchers]
+      summary: Get a list of all vouchers
+      description: Fetches a list of vouchers. Public users will only receive active vouchers. Authenticated admins can use pagination parameters to get a complete list.
+      parameters:
+        - $ref: '../components/parameters.yaml#/limit'
+        - $ref: '../components/parameters.yaml#/page'
+        - $ref: '../components/parameters.yaml#/name'
+        - name: pagination
+          in: query
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: A list of voucher objects.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '../schemas/voucher.yaml#/PaginatedVouchers'
+                  - type: array
+                    items:
+                      $ref: '../schemas/voucher.yaml#/Voucher'
+
+    post:
+      tags: [Vouchers (Admin)]
+      summary: Create a new voucher (Admin only)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref: '../schemas/voucher.yaml#/VoucherInput'
+                - type: object
+                  properties:
+                    image:
+                      type: string
+                      format: binary
+      responses:
+        '201':
+          description: Voucher created successfully.
+        '400':
+          description: Bad Request (Validation error or duplicate entry).
+
+  /vouchers/{id}:
+    put:
+      tags: [Vouchers (Admin)]
+      summary: Update a voucher (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref: '../schemas/voucher.yaml#/VoucherInput'
+                - type: object
+                  properties:
+                    image:
+                      type: string
+                      format: binary
+      responses:
+        '200':
+          description: Voucher updated successfully.
+        '404':
+          description: Voucher not found.
+
+    delete:
+      tags: [Vouchers (Admin)]
+      summary: Delete a voucher (Admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      responses:
+        '200':
+          description: Voucher deleted successfully.
+        '404':
+          description: Voucher not found.
