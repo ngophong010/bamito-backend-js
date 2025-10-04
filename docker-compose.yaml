@@ -1,0 +1,57 @@
+# This file defines your entire development environment: the database and the app.
+services:
+  # This is the service for your PostgreSQL database
+  db:
+    image: postgres:18.0-alpine3.22 # Use a specific, official version of PostgreSQL
+    container_name: bamito_postgres_dev
+    restart: unless-stopped
+    environment:
+      # These variables create the database and user inside the container.
+      # Docker Compose automatically reads your .env file and injects these values.
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      # This maps the port inside the container (5432) to a port on your
+      # local machine (5432), so you can connect with a GUI tool.
+      - "5433:5432"
+    volumes:
+      # This is the most important part. It creates a persistent "volume" named
+      # 'postgres_data' and mounts it inside the container. This ensures that
+      # even if you stop and remove the container, your data is safe.
+      - postgres_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer:5.4.0
+    container_name: bamito_adminer_dev
+    ports:
+      - "8081:8080" # Access Adminer in your browser at http://localhost:8081
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: bamito_postgres_dev
+
+  # This is the service for your Express.js application
+  # app:
+  #   container_name: bamito_app
+  #   build: . # Tells Docker to build an image from the Dockerfile in this directory
+  #   ports:
+  #     - "${PORT}:${PORT}" # Maps your app's port to your local machine
+  #   environment:
+  #     # We need to change the DB_HOST to point to the database service name
+  #     DB_HOST: db
+  #     DB_PORT: 5432
+  #     NODE_ENV: development
+  #     ACCESS_KEY: ${ACCESS_KEY}
+  #     REFRESH_KEY: ${REFRESH_KEY}
+
+  #   depends_on:
+  #     - db # Tells Docker to start the 'db' service before starting the 'app' service
+  #   volumes:
+  #     # Mounts your source code into the container for live reloading with nodemon
+  #     - .:/app
+  #     # Add an anonymous volume for node_modules to prevent local node_modules from overwriting it
+  #     - /app/node_modules
+
+# This defines the named volume for the database to ensure data persistence.
+volumes:
+  postgres_data:
