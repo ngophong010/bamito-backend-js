@@ -1,0 +1,80 @@
+paths:
+  /feedback:
+    get:
+      tags: [Feedback]
+      summary: Get all feedback for a specific product
+      description: Fetches a list of all feedback (reviews) submitted for a given product.
+      parameters:
+        - name: productId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of feedback objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../schemas/feedback.yaml#/FeedbackView'
+
+    post:
+      tags: [Feedback]
+      summary: Submit a new feedback for a product
+      description: Allows an authenticated user to submit a rating and description for a product from a completed order.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/feedback.yaml#/FeedbackInput'
+      responses:
+        '201':
+          description: Feedback created successfully.
+        '400':
+          description: Bad Request (e.g., validation error, user has already reviewed this product).
+        '401':
+          description: Unauthorized.
+
+  /feedback/{id}:
+    put:
+      tags: [Feedback]
+      summary: Update a feedback
+      description: Allows a user to update their own feedback, or an admin to update any feedback.
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/feedback.yaml#/FeedbackUpdateInput'
+      responses:
+        '200':
+          description: Feedback updated successfully.
+        '403':
+          description: Forbidden (User does not own this feedback).
+        '404':
+          description: Feedback not found.
+
+    delete:
+      tags: [Feedback]
+      summary: Delete a feedback (Admin only)
+      description: Allows an administrator to delete any feedback.
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '../components/parameters.yaml#/id'
+      responses:
+        '200':
+          description: Feedback deleted successfully.
+        '403':
+          description: Forbidden (User is not an admin).
+        '404':
+          description: Feedback not found.
