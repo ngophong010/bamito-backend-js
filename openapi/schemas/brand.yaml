@@ -1,0 +1,48 @@
+Brand:
+  type: object
+  properties:
+    id:
+      type: integer
+      description: The unique, numeric primary key of the brand.
+      example: 1
+      readOnly: true
+    brandId:
+      type: string
+      description: The unique business ID or code for the brand (e.g., "YONEX").
+      example: 'YONEX'
+    brandName:
+      type: string
+      description: The full display name of the brand.
+      example: 'Yonex'
+
+BrandInput:
+  type: object
+  properties:
+    brandId:
+      type: string
+      description: The unique business ID or code for the brand.
+      example: 'YONEX'
+    brandName:
+      type: string
+      description: The full display name of the brand.
+      example: 'Yonex'
+  required:
+    - brandId
+    - brandName
+
+PaginatedBrands:
+  type: object
+  properties:
+    totalItems:
+      type: integer
+      example: 25
+    totalPages:
+      type: integer
+      example: 3
+    currentPage:
+      type: integer
+      example: 1
+    brands:
+      type: array
+      items:
+        $ref: '#/Brand'
