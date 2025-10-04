@@ -1,0 +1,42 @@
+# The full Category object returned by the API
+Category:
+  type: object
+  properties:
+    id:
+      type: integer
+      readOnly: true
+    categoryId:
+      type: string
+      example: "RACKET"
+    categoryName:
+      type: string
+      example: "Vợt cầu lông"
+
+# The object the client sends to create or update a Category
+CategoryInput:
+  type: object
+  properties:
+    categoryId:
+      type: string
+      example: "RACKET"
+    categoryName:
+      type: string
+      example: "Vợt cầu lông"
+  required:
+    - categoryId
+    - categoryName
+
+# The shape of the response for the paginated GET endpoint
+PaginatedCategorys:
+  type: object
+  properties:
+    totalItems:
+      type: integer
+    totalPages:
+      type: integer
+    currentPage:
+      type: integer
+    categorys:
+      type: array
+      items:
+        $ref: "#/Category"
