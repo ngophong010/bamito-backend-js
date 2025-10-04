@@ -1,0 +1,63 @@
+# ===============================================================
+#  OUTPUT SCHEMA (What the API sends back)
+# ===============================================================
+Address:
+  type: object
+  description: A complete delivery address object as it exists in the database.
+  properties:
+    id:
+      type: integer
+      description: The unique, numeric primary key of the address.
+      example: 42
+      readOnly: true
+    userId:
+      type: integer
+      description: The ID of the user who owns this address.
+      example: 5
+      readOnly: true
+    receiverName:
+      type: string
+      description: The full name of the person receiving the delivery.
+      example: 'Nguyễn Văn A'
+    phone:
+      type: string
+      description: The contact phone number for the delivery.
+      example: '0987654321'
+    address:
+      type: string
+      description: The full address string.
+      example: '123 Đường ABC, Phường 4, Quận 5, TP. Hồ Chí Minh'
+    isDefault:
+      type: boolean
+      description: 'Indicates if this is the user''s default shipping address.'
+      example: true
+  required:
+    - id
+    - userId
+    - receiverName
+    - phone
+    - address
+
+# ===============================================================
+#  INPUT SCHEMA (What the client sends to the API)
+# ===============================================================
+AddressInput:
+  type: object
+  description: Data required from the frontend to create or update a delivery address.
+  properties:
+    receiverName:
+      type: string
+      example: 'Nguyễn Văn A'
+    phone:
+      type: string
+      example: '0987654321'
+    address:
+      type: string
+      example: '123 Đường ABC, Phường 4, Quận 5, TP. Hồ Chí Minh'
+    isDefault:
+      type: boolean
+      example: false
+  required:
+    - receiverName
+    - phone
+    - address
