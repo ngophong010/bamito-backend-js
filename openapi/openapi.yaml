@@ -1,0 +1,302 @@
+openapi: 3.0.0
+info:
+  title: BAMITO Badminton Shop API
+  version: 1.0.0
+  description: The official API documentation for the BAMITO e-commerce backend.
+  contact:
+    name: API Support
+    email: support@example.com
+  license:
+    name: MIT
+servers:
+  - url: https://your-production-domain.com/api/v1
+    description: Production Server
+  - url: http://localhost:8080/api/v1
+    description: Local Development Server
+
+tags:
+  - name: Authentication
+    description: Endpoints for user registration, login, and session management and password reset.
+  - name: Users (Profile)
+    description: Operations for an authenticated user to manage their OWN profile and data.
+  - name: Users (Admin)
+    description: Operations for administrators to manage the entire user base.
+  - name: Products
+    description: Publicly accessible endpoints for viewing products and product categories.
+  - name: Products (Admin)
+    description: Secure endpoints for administrators to create, update, and manage the product catalog.
+  - name: Inventory
+    description: Publicly endpoints for viewing product stock levels.
+  - name: Inventory (Admin)
+    description: Secure endpoints for administrators to manage product stock levels by size.
+  - name: Cart
+    description: Operations for an authenticated user to manage their shopping cart.
+  - name: Orders
+    description: Operations for an authenticated user to create and view their own orders.
+  - name: Orders (Admin)
+    description: Operations for administrators to manage all orders and view reports.
+  - name: Favourites
+    description: Endpoints for managing a user's favourite products.
+  - name: Feedback
+    description: Endpoints for submitting and viewing public product feedback.
+  - name: Brands
+    description: Publicly endpoints for viewing all brands.
+  - name: Brands (Admin)
+    description: Operations for administrators to create, update, and delete brands.
+  - name: Sizes
+    description:  Publicly endpoints for viewing all available sizes.
+  - name: Sizes (Admin)
+    description:  Operations for administrators to manage all sizes.
+  - name: Product Types
+    description:  Publicly endpoints for viewing all product categories.
+  - name: Product Types (Admin)
+    description:  Operations for administrators to manage all product categories.
+  - name: Vouchers
+    description:  Publicly endpoints for viewing active vouchers.
+  - name: Vouchers (Admin)
+    description:  Operations for administrators to create, update, and delete vouchers.
+  - name: Roles (Admin)
+    description: Operations for managing user roles.
+
+# This section lists all your API endpoints by referencing the path files.
+paths:
+  /auth/register: 
+    $ref: './paths/auth.yaml#/paths/~1auth~1register'
+  /auth/login:
+    $ref: './paths/auth.yaml#/paths/~1auth~1login'
+  /auth/logout: 
+    $ref: './paths/auth.yaml#/paths/~1auth~1logout'
+  /auth/refresh-token: 
+    $ref: './paths/auth.yaml#/paths/~1auth~1refresh-token'
+  /auth/activate: 
+    $ref: './paths/auth.yaml#/paths/~1auth~1activate'
+  /auth/password/send-otp: 
+    $ref: './paths/auth.yaml#/paths/~1auth~1password~1send-otp'
+  /auth/password/reset: 
+    $ref: './paths/auth.yaml#/paths/~1auth~1password~1reset-with-otp'
+
+  /users/profile: 
+    $ref: './paths/users.yaml#/paths/~1users~1profile'
+  /users/profile/change-password: 
+    $ref: './paths/users.yaml#/paths/~1users~1profile~1change-password'
+  /users: 
+    $ref: './paths/users.yaml#/paths/~1users'
+  /users/{id}: 
+    $ref: './paths/users.yaml#/paths/~1users~1{id}'
+
+  /products: 
+    $ref: './paths/products.yaml#/paths/~1products'
+  /products/{productId}: 
+    $ref: './paths/products.yaml#/paths/~1products~1{productId}'
+  /products/{id}: 
+    $ref: './paths/products.yaml#/paths/~1products~1{id}'
+  /products/sale-off:
+    $ref: './paths/products.yaml#/paths/~1products~1sale-off'
+  /products/types/{CategoryId}: 
+    $ref: './paths/products.yaml#/paths/~1products~1types~1{categoryId}'
+  /products/{productId}/feedback:
+    $ref: './paths/products.yaml#/paths/~1products~1{productId}~1feedback'
+
+  /cart:
+    $ref: './paths/cart.yaml#/paths/~1cart'
+  /cart/items/{CartItemId}:
+    $ref: './paths/cart.yaml#/paths/~1cart~1items~1{CartItemId}'
+
+  /orders:
+    $ref: './paths/orders.yaml#/paths/~1orders'
+  /orders/create-payment-url:
+    $ref: './paths/orders.yaml#/paths/~1orders~1create-payment-url'
+  /orders/vnpay-return:
+    $ref: './paths/orders.yaml#/paths/~1orders~1vnpay-return'
+  /orders/{id}:
+    $ref: './paths/orders.yaml#/paths/~1orders~1{id}'
+  /orders/{id}/cancel:
+    $ref: './paths/orders.yaml#/paths/~1orders~1{id}~1cancel'
+  /orders/admin/all:
+    $ref: './paths/orders.yaml#/paths/~1orders~1admin~1all'
+  /orders/admin/statistics:
+    $ref: './paths/orders.yaml#/paths/~1orders~1admin~1statistics'
+  /orders/admin/reports/products:
+    $ref: './paths/orders.yaml#/paths/~1orders~1admin~1reports~1products'
+  /orders/admin/{id}/status:
+    $ref: './paths/orders.yaml#/paths/~1orders~1admin~1{id}~1status'
+  /orders/admin/{id}:
+    $ref: './paths/orders.yaml#/paths/~1orders~1admin~1{id}'
+  
+  /favourites:
+    $ref: './paths/favourites.yaml#/paths/~1favourites'
+  /favourites/{productId}:
+    $ref: './paths/favourites.yaml#/paths/~1favourites~1{productId}'
+
+  /feedback:
+    $ref: './paths/feedback.yaml#/paths/~1feedback'
+  /feedback/{id}:
+    $ref: './paths/feedback.yaml#/paths/~1feedback~1{id}'
+
+  # ===============================================================
+  # ADMIN MANAGEMENT
+  # ===============================================================
+  /brands:
+    $ref: './paths/brands.yaml#/paths/~1brands'
+  /brands/{id}:
+    $ref: './paths/brands.yaml#/paths/~1brands~1{id}'
+
+  /product-types:
+    $ref: './paths/product-types.yaml#/paths/~1product-types'
+  /product-types/{id}:
+    $ref: './paths/product-types.yaml#/paths/~1product-types~1{id}'
+  /product-types/{categoryId}:
+    $ref: './paths/product-types.yaml#/paths/~1product-types~1{categoryId}'
+
+  /sizes:
+    $ref: './paths/sizes.yaml#/paths/~1sizes'
+  /sizes/{id}:
+    $ref: './paths/sizes.yaml#/paths/~1sizes~1{id}'
+
+  /product-sizes:
+    $ref: './paths/product-sizes.yaml#/paths/~1product-sizes'
+  /product-sizes/{id}:
+    $ref: './paths/product-sizes.yaml#/paths/~1product-sizes~1{id}'
+
+  /vouchers:
+    $ref: './paths/vouchers.yaml#/paths/~1vouchers'
+  /vouchers/{id}:
+    $ref: './paths/vouchers.yaml#/paths/~1vouchers~1{id}'
+
+  /roles:
+    $ref: './paths/roles.yaml#/paths/~1roles'
+
+# This section is the library of all your reusable components.
+components:
+  # --- SECURITY SCHEMES ---
+  securitySchemes:
+    # We reference the specific component from the security file
+    BearerAuth:
+      $ref: './components/security.yaml#/BearerAuth'
+
+  # --- PARAMETERS ---
+  # We list and reference each reusable parameter individually
+  parameters:
+    id:
+      $ref: './components/parameters.yaml#/id'
+    productId:
+      $ref: './components/parameters.yaml#/productId'
+    categoryId:
+      $ref: './components/parameters.yaml#/categoryId'
+    limit:
+      $ref: './components/parameters.yaml#/limit'
+    page:
+      $ref: './components/parameters.yaml#/page'
+    name:
+      $ref: './components/parameters.yaml#/name'
+    sort:
+      $ref: './components/parameters.yaml#/sort'
+    status:
+      $ref: './components/parameters.yaml#/status'
+    timeStart:
+      $ref: './components/parameters.yaml#/timeStart'
+    timeEnd:
+      $ref: './components/parameters.yaml#/timeEnd'
+
+  # --- SCHEMAS ---
+  # We list and reference each reusable schema individually
+  schemas:
+    # Auth Schemas
+    RegisterInput:
+      $ref: './schemas/auth.yaml#/RegisterInput'
+    LoginInput:
+      $ref: './schemas/auth.yaml#/LoginInput'
+    PasswordResetInput:
+      $ref: './schemas/auth.yaml#/PasswordResetInput'
+    AutTokensResponse:
+      $ref: './schemas/auth.yaml#/AuthTokensResponse'
+      
+    # User Schemas
+    UserInput:
+      $ref: './schemas/user.yaml#/UserInput'
+    UserDetail:
+      $ref: './schemas/user.yaml#/UserDetail'
+    PaginatedUsers:
+      $ref: './schemas/user.yaml#/PaginatedUsers'
+    PasswordChangeInput:
+      $ref: './schemas/user.yaml#/PasswordChangeInput'
+      
+    # Role Schemas
+    Role:
+      $ref: './schemas/role.yaml#/Role'
+      
+    # Product Schemas
+    ProductInput:
+      $ref: './schemas/product.yaml#/ProductInput'
+    ProductSummary:
+      $ref: './schemas/product.yaml#/ProductSummary'
+    ProductDetail:
+      $ref: './schemas/product.yaml#/ProductDetail'
+    PaginatedProducts:
+      $ref: './schemas/product.yaml#/PaginatedProducts'
+      
+    # Brand Schemas
+    Brand:
+      $ref: './schemas/brand.yaml#/Brand'
+    BrandInput:
+      $ref: './schemas/brand.yaml#/BrandInput'
+    PaginatedBrands:
+      $ref: './schemas/brand.yaml#/PaginatedBrands'
+
+    # Cart Schemas
+    CartView:
+      $ref: './schemas/cart.yaml#/CartView'
+    CartItemInput:
+      $ref: './schemas/cart.yaml#/CartItemInput'
+
+    # Order Schemas
+    OrderInput:
+      $ref: './schemas/order.yaml#/OrderInput'
+    OrderDetail:
+      $ref: './schemas/order.yaml#/OrderDetail'
+    PaginatedOrders:
+      $ref: './schemas/order.yaml#/PaginatedOrders'
+    Statistics:
+      $ref: './schemas/order.yaml#/Statistics'
+      
+    # Shared Schemas
+    Error:
+      $ref: './schemas/error.yaml#/Error'
+    SuccessMessage:
+      $ref: './schemas/shared.yaml#/SuccessMessage'
+    PaginationInfo:
+      $ref: './schemas/shared.yaml#/PaginationInfo'
+      
+    # Address Schemas
+    Address:
+      $ref: './schemas/address.yaml#/Address'
+    AddressInput:
+      $ref: './schemas/address.yaml#/AddressInput'
+
+    # Favourites Schemas
+    FavouriteInput:
+      $ref: './schemas/favourite.yaml#/FavouriteInput'
+
+    # Feedback Schemas
+    FeedbackInput:
+      $ref: './schemas/feedback.yaml#/FeedbackInput'
+    FeedbackUpdateInput:
+      $ref: './schemas/feedback.yaml#/FeedbackUpdateInput'
+    FeedbackView:
+      $ref: './schemas/feedback.yaml#/FeedbackView'
+
+    # Inventory (Inventory) Schemas
+    PaginatedInventorys:
+      $ref: './schemas/product-size.yaml#/PaginatedInventorys'
+    InventoryInput:
+      $ref: './schemas/product-size.yaml#/InventoryInput'
+    UpdateInventoryInput:
+      $ref: './schemas/product-size.yaml#/UpdateInventoryInput'
+    
+    # Category Schemas
+    CategoryInput:
+      $ref: './schemas/product-type.yaml#/CategoryInput'
+
+    # Size Schemas
+    SizeInput:
+      $ref: './schemas/size.yaml#/SizeInput'
