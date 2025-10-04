@@ -1,0 +1,67 @@
+paths:
+  /cart:
+    get:
+      tags: [Cart]
+      summary: Get the current user's shopping cart
+      description: Fetches all items, quantities, prices, and stock levels for the currently authenticated user's cart.
+      security:
+        - BearerAuth: [] # This action requires a logged-in user
+      responses:
+        '200':
+          description: The user's complete cart details.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/cart.yaml#/CartView'
+        '401':
+          description: Unauthorized.
+
+    post:
+      tags: [Cart]
+      summary: Add or update an item in the cart
+      description: Adds a new product/size combination to the cart, or updates the quantity if the item already exists. The server will calculate the total price.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/cart.yaml#/CartItemInput'
+      responses:
+        '200':
+          description: Item added or updated successfully. Returns the entire updated cart.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/cart.yaml#/CartView'
+        '400':
+          description: Bad Request (e.g., invalid productId, quantity exceeds stock).
+
+  /cart/items/{CartItemId}:
+    delete:
+      tags: [Cart]
+      summary: Remove an item from the cart
+      description: Deletes a specific item from the user's cart using its unique cart detail ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: CartItemId
+          in: path
+          required: true
+          description: The unique primary key ID of the cart_items row to delete.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Item removed successfully. Returns the entire updated cart.
+          content:
+            application/json:
+              schema:
+                $ref: '../schemas/cart.yaml#/CartView'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden (User does not own this cart item).
+        '404':
+          description: Item not found in the cart.
