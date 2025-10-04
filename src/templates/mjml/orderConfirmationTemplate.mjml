@@ -1,0 +1,55 @@
+<mjml>
+  <mj-head>
+    <mj-preview>Thank you for your order! Order #<%= orderDetails.orderId %></mj-preview>
+    <mj-title>Your Bamito Order Confirmation</mj-title>
+    <mj-font name="Inter" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700" />
+    <mj-style>
+      .body { background-color: #f3f4f6; }
+      .card { background-color: #ffffff; border-radius: 12px; }
+      .footer-link { color: #6b7280; text-decoration: none; }
+    </mj-style>
+  </mj-head>
+  <mj-body css-class="body">
+    <mj-section padding="24px 0">
+      <mj-column>
+        <mj-image width="100px" src="https://ehoonux.stripocdn.email/content/guids/CABINET_67e080d830d87c17802bd9b4fe1c0912/images/55191618237638326.png" alt="Bamitop Logo" />
+      </mj-column>
+    </mj-section>
+    <mj-section padding="0 24px">
+      <mj-column css-class="card">
+        <mj-text padding="24px 24px 16px" font-size="28px" font-weight="700" color="#111827" font-family="Inter, sans-serif">
+          Order Confirmed!
+        </mj-text>
+        <mj-text padding="0 24px 16px" font-size="16px" line-height="24px" color="#374151" font-family="Inter, sans-serif">
+          Hi <%= orderDetails.user.userName %>,
+        </mj-text>
+        <mj-text padding="0 24px 24px" font-size="16px" line-height="24px" color="#374151" font-family="Inter, sans-serif">
+          Thank you for your purchase. We've received your order and are getting it ready for shipment. You can view your order details below.
+        </mj-text>
+        <mj-divider border-color="#e5e7eb" border-width="1px"></mj-divider>
+        <mj-text padding="24px 24px 0" font-size="14px" color="#6b7280" font-family="Inter, sans-serif">
+          ORDER ID
+        </mj-text>
+        <mj-text padding="4px 24px 16px" font-size="16px" font-weight="700" color="#111827" font-family="Inter, sans-serif">
+          #<%= orderDetails.orderId %>
+        </mj-text>
+        <mj-text padding="0 24px 0" font-size="14px" color="#6b7280" font-family="Inter, sans-serif">
+          TOTAL AMOUNT
+        </mj-text>
+        <mj-text padding="4px 24px 16px" font-size="20px" font-weight="700" color="#111827" font-family="Inter, sans-serif">
+          <%= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderDetails.totalPrice) %>
+        </mj-text>
+        <mj-text padding="0 24px 24px" font-size="16px" line-height="24px" color="#374151" font-family="Inter, sans-serif">
+          <b>Shipping to:</b> <%= orderDetails.deliveryAddress %>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="24px">
+      <mj-column>
+        <mj-text align="center" font-size="12px" line-height="18px" color="#6b7280" font-family="Inter, sans-serif">
+          &copy; <%= new Date().getFullYear() %> Bamito Shop. All rights reserved.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

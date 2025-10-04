@@ -1,0 +1,46 @@
+<mjml>
+  <mj-head>
+    <mj-preview>Your verification code is here.</mj-preview>
+    <mj-title>Your Bamito Password Reset Code</mj-title>
+    <mj-font name="Inter" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700" />
+    <mj-style>
+      .body { background-color: #f3f4f6; }
+      .card { background-color: #ffffff; border-radius: 12px; }
+      .otp-code { font-size: 36px; font-weight: 700; color: #111827; letter-spacing: 4px; }
+      .footer-link { color: #6b7280; text-decoration: none; }
+    </mj-style>
+  </mj-head>
+  <mj-body css-class="body">
+    <mj-section padding="24px 0">
+      <mj-column>
+        <mj-image width="100px" src="https://ehoonux.stripocdn.email/content/guids/CABINET_67e080d830d87c17802bd9b4fe1c0912/images/55191618237638326.png" alt="Bamitop Logo" />
+      </mj-column>
+    </mj-section>
+    <mj-section padding="0 24px">
+      <mj-column css-class="card">
+        <mj-text padding="24px 24px 16px" font-size="28px" font-weight="700" color="#111827" font-family="Inter, sans-serif">
+          Your Verification Code
+        </mj-text>
+        <mj-text padding="0 24px 16px" font-size="16px" line-height="24px" color="#374151" font-family="Inter, sans-serif">
+          Hi <%= userName %>,
+        </mj-text>
+        <mj-text padding="0 24px 16px" font-size="16px" line-height="24px" color="#374151" font-family="Inter, sans-serif">
+          Use the following One-Time Password (OTP) to complete your password reset. This code is valid for 5 minutes.
+        </mj-text>
+        <mj-text padding="8px 24px 24px" css-class="otp-code" font-family="Inter, sans-serif">
+          <%= otpCode %>
+        </mj-text>
+        <mj-text padding="0 24px 16px" font-size="14px" line-height="20px" color="#6b7280" font-family="Inter, sans-serif">
+          If you did not request this, you can safely ignore this email.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="24px">
+      <mj-column>
+        <mj-text align="center" font-size="12px" line-height="18px" color="#6b7280" font-family="Inter, sans-serif">
+          &copy; <%= new Date().getFullYear() %> Bamito Shop. All rights reserved.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

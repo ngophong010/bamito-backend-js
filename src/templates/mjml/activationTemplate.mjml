@@ -1,0 +1,87 @@
+<mjml>
+  <mj-head>
+    <mj-preview>Just one more step to get started with Bamito!</mj-preview>
+    <mj-title>Activate Your Bamito Account</mj-title>
+    <mj-font
+      name="Inter"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700"
+    />
+    <mj-style>
+      .body { background-color: #f3f4f6; } .card { background-color: #ffffff;
+      border-radius: 12px; } .button a { background-color: #f46f25 !important;
+      color: #ffffff !important; font-weight: bold !important; border-radius:
+      8px !important; } .footer-link { color: #6b7280; text-decoration: none; }
+    </mj-style>
+  </mj-head>
+  <mj-body css-class="body">
+    <mj-section padding="24px 0"
+      ><mj-column
+        ><mj-image
+          width="100px"
+          src="https://i.imgur.com/chfTtLW.jpeg"
+          alt="Bamitop Logo" /></mj-column
+    ></mj-section>
+    <mj-section padding="0 24px">
+      <mj-column css-class="card">
+        <mj-text
+          padding="24px 24px 16px"
+          font-size="28px"
+          font-weight="700"
+          color="#111827"
+          font-family="Inter, sans-serif"
+          >Confirm Your Email Address</mj-text
+        >
+        <mj-text
+          padding="0 24px 16px"
+          font-size="16px"
+          line-height="24px"
+          color="#374151"
+          font-family="Inter, sans-serif"
+          >Hi <%= userName %>,</mj-text
+        >
+        <mj-text
+          padding="0 24px 16px"
+          font-size="16px"
+          line-height="24px"
+          color="#374151"
+          font-family="Inter, sans-serif"
+          >Thanks for registering! Before we get started, we just need to
+          confirm that this is you. Click the button below to verify your email
+          address:</mj-text
+        >
+        <mj-button
+          href="<%= activationUrl %>"
+          css-class="button"
+          font-family="Inter, sans-serif"
+          font-size="16px"
+          padding="8px 24px 24px"
+          >Verify Email</mj-button
+        >
+        <mj-text
+          padding="0 24px 16px"
+          font-size="14px"
+          line-height="20px"
+          color="#6b7280"
+          font-family="Inter, sans-serif"
+          >If you did not sign up for this account, you can ignore this
+          email.</mj-text
+        >
+      </mj-column>
+    </mj-section>
+    <mj-section padding="24px">
+      <mj-column>
+        <mj-text
+          align="center"
+          font-size="12px"
+          line-height="18px"
+          color="#6b7280"
+          font-family="Inter, sans-serif"
+        >
+          © <%= new Date().getFullYear() %> Bamito Shop. All rights reserved.
+          <br />
+          <a href="#" class="footer-link">Unsubscribe</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
