@@ -1,0 +1,67 @@
+paths:
+  /favourites:
+    get:
+      tags: [Favourites]
+      summary: Get the current user's favourite product IDs
+      description: Fetches a simple array of numeric product IDs that the currently authenticated user has favourited.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: An array of product IDs.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errCode:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      type: integer
+                      example: 123
+        '401':
+          description: Unauthorized.
+
+    post:
+      tags: [Favourites]
+      summary: Add a product to favourites
+      description: Adds a product to the currently authenticated user's list of favourites.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../schemas/favourite.yaml#/FavouriteInput'
+      responses:
+        '201':
+          description: Product added to favourites successfully.
+        '400':
+          description: Bad Request (e.g., product already in favourites, invalid productId).
+        '401':
+          description: Unauthorized.
+
+  /favourites/{productId}:
+    delete:
+      tags: [Favourites]
+      summary: Remove a product from favourites
+      description: Removes a product from the currently authenticated user's list of favourites using the product's numeric ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: The numeric primary key ID of the product to remove from favourites.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product removed from favourites successfully.
+        '401':
+          description: Unauthorized.
+        '404':
+          description: Favourite entry not found.
