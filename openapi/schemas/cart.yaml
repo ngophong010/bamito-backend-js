@@ -1,0 +1,52 @@
+# The object the client sends to add/update a cart item
+CartItemInput:
+  type: object
+  properties:
+    productId:
+      type: integer
+      description: The primary key ID of the product to add.
+    sizeId:
+      type: integer
+      description: The primary key ID of the chosen size.
+    quantity:
+      type: integer
+      description: The desired quantity of the item.
+      minimum: 1
+  required:
+    - productId
+    - sizeId
+    - quantity
+
+# The object representing a single item in the cart, returned by the API
+CartItem:
+  type: object
+  properties:
+    id:
+      type: integer
+      description: The unique ID for this cart item row (from cart_items).
+      readOnly: true
+    quantity:
+      type: integer
+      description: The quantity of this item in the cart.
+    totalPrice:
+      type: number
+      description: The server-calculated total price for this line item (price * quantity).
+    productData:
+      $ref: './product.yaml#/ProductSummary' # Reuse the product model!
+    sizeData:
+      $ref: './size.yaml#/Size' # You would create a size.yaml for this
+    quantitySize:
+      type: integer
+      description: The total available stock for this product/size combination.
+
+# The full response for any successful cart operation (GET, POST, DELETE)
+CartView:
+  type: object
+  properties:
+    products:
+      type: array
+      items:
+        $ref: '#/CartItem'
+    totalProduct:
+      type: integer
+      description: The total number of unique items in the cart.
