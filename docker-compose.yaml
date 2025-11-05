@@ -31,26 +31,26 @@ services:
       ADMINER_DEFAULT_SERVER: bamito_postgres_dev
 
   # This is the service for your Express.js application
-  # app:
-  #   container_name: bamito_app
-  #   build: . # Tells Docker to build an image from the Dockerfile in this directory
-  #   ports:
-  #     - "${PORT}:${PORT}" # Maps your app's port to your local machine
-  #   environment:
-  #     # We need to change the DB_HOST to point to the database service name
-  #     DB_HOST: db
-  #     DB_PORT: 5432
-  #     NODE_ENV: development
-  #     ACCESS_KEY: ${ACCESS_KEY}
-  #     REFRESH_KEY: ${REFRESH_KEY}
+  app:
+    container_name: bamito_app
+    build: . # Tells Docker to build an image from the Dockerfile in this directory
+    ports:
+      - "${PORT}:${PORT}" # Maps your app's port to your local machine
+    environment:
+      # We need to change the DB_HOST to point to the database service name
+      DB_HOST: db
+      DB_PORT: 5432
+      NODE_ENV: development
+      ACCESS_KEY: ${ACCESS_KEY}
+      REFRESH_KEY: ${REFRESH_KEY}
 
-  #   depends_on:
-  #     - db # Tells Docker to start the 'db' service before starting the 'app' service
-  #   volumes:
-  #     # Mounts your source code into the container for live reloading with nodemon
-  #     - .:/app
-  #     # Add an anonymous volume for node_modules to prevent local node_modules from overwriting it
-  #     - /app/node_modules
+    depends_on:
+      - db # Tells Docker to start the 'db' service before starting the 'app' service
+    volumes:
+      # Mounts your source code into the container for live reloading with nodemon
+      - .:/app
+      # Add an anonymous volume for node_modules to prevent local node_modules from overwriting it
+      - /app/node_modules
 
 # This defines the named volume for the database to ensure data persistence.
 volumes:

@@ -1,20 +1,36 @@
-# Use an official Node.js runtime as a parent image
-FROM node:20-alpine
+# =================================================================
+# Stage 1: Build Stage
+# =================================================================
+FROM node:20-alpine AS builder
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install app dependencies
-RUN npm install
+# --- THE FIX IS HERE ---
+# Use the --legacy-peer-deps flag to resolve the dependency conflict during the build.
+RUN npm install --legacy-peer-deps
 
-# Copy the rest of your application's source code
 COPY . .
 
-# Your app runs on port 8080, so we need to expose it
+# (Optional build step for TypeScript)
+# RUN npm run build
+
+# =================================================================
+# Stage 2: Production Stage
+# =================================================================
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy dependencies and code from the 'builder' stage
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app ./
+
+# Expose the port from the .env file (Docker Compose will pass this in)
+# Note: You need to pass PORT as a build arg or have it in the environment
+# For simplicity with compose, we'll rely on the compose 'ports' mapping.
 EXPOSE 8080
 
-# The command to run your app
+# The command to run your application
 CMD [ "npm", "run", "dev" ]

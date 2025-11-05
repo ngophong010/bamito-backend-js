@@ -79,7 +79,7 @@ const getAllBrands = async (
     totalItems: count,
     totalPages: Math.ceil(count / effectiveLimit),
     currentPage: effectivePage,
-    brands: rows,
+    items: rows,
   };
 };
 
