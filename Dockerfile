@@ -30,7 +30,7 @@ COPY --from=builder /app ./
 # Expose the port from the .env file (Docker Compose will pass this in)
 # Note: You need to pass PORT as a build arg or have it in the environment
 # For simplicity with compose, we'll rely on the compose 'ports' mapping.
-EXPOSE 8080
+EXPOSE 8181
 
 # The command to run your application
 CMD [ "npm", "run", "dev" ]

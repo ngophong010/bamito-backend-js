@@ -44,7 +44,7 @@ const config = {
     password: process.env.DB_PASSWORD || null,
     database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,
-    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5433,
+    port: process.env.DB_PORT ? Number.parseInt(process.env.DB_PORT, 10) : 5432,
     dialect: "postgres",
   },
   test: {
@@ -60,7 +60,7 @@ const config = {
     password: process.env.DB_PASSWORD || null,
     database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,
-    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5433,
+    port: process.env.DB_PORT ? Number.parseInt(process.env.DB_PORT, 10) : 5432,
     dialect: "postgres",
 
     // ENHANCEMENT: Add dialectOptions for production-grade SSL connections

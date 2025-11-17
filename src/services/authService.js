@@ -1,4 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
+const { sequelize } = require("../config/connectDB.js");
+const { User, Role } = require("../models");
 
 // --- Import low-level utilities ---
 const { hashPassword, comparePassword } = require("../utils/password.js");
@@ -192,6 +194,24 @@ const changePasswordInProfile = async (id, currentPassword, newPassword) => {
     // Set the new password. The model's 'beforeSave' hook will hash it automatically.
     user.password = newPassword;
     await user.save(); // This triggers the hook
+};
+
+/**
+ * Helper function to generate and save OTP for a user
+ * @param {number} userId The user ID
+ * @param {number} expiryMinutes OTP expiry time in minutes
+ * @returns {Promise<string>} The generated OTP code
+ */
+const _generateAndSaveOtp = async (userId, expiryMinutes = 5) => {
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const timeOtp = new Date(Date.now() + expiryMinutes * 60 * 1000);
+    
+    await User.update(
+        { otpCode, timeOtp },
+        { where: { id: userId } }
+    );
+    
+    return otpCode;
 };
 
 const verifyOtp = async (userId, otpCode) => {
