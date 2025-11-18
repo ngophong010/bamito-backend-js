@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const { sequelize } = require("../config/connectDB.js");
+const { Op } = require("sequelize");
 const { User, Role } = require("../models");
 
 // --- Import low-level utilities ---
@@ -19,10 +20,15 @@ const emailService = require("../utils/email.js");
  * @param {string} password The user's raw password.
  * @returns {Promise<{user: object, accessToken: string, refreshToken: string}>} The user data and tokens.
  */
-const loginUser = async (email, password) => {
-    // To check the password, we must explicitly ask for the user WITH their password hash
+const loginUser = async (identifier, password) => {
+    // identifier can be email or username
     const user = await User.scope('withPassword').findOne({
-        where: { email },
+        where: {
+            [Op.or]: [
+                { email: identifier },
+                { userName: identifier }
+            ]
+        },
         include: [{ model: Role, as: 'role', attributes: ['roleId'] }],
     });
 
@@ -51,12 +57,16 @@ const loginUser = async (email, password) => {
  * @returns {Promise<import('../../models/user')>} The created or updated user object.
  */
 const registerUser = async (data) => {
-    const { email, userName, password, roleId } = data;
-    if (!email || !userName || !password || !roleId) {
+    const { email, userName, password, roleId = 3 } = data; // Default to USER role (3)
+    if (!email || !userName || !password) {
         throw new Error("Missing required parameters!");
     }
 
     return sequelize.transaction(async (t) => {
+        // In development, auto-activate users; in production, require email verification
+        const isDevelopment = process.env.NODE_ENV === 'development';
+        const activationToken = uuidv4();
+        
         const [user, created] = await User.findOrCreate({
             where: { email },
             defaults: {
@@ -64,8 +74,8 @@ const registerUser = async (data) => {
                 userName,
                 password, // The model's beforeSave hook will hash this automatically
                 roleId,
-                tokenRegister: uuidv4(),
-                status: 0,
+                tokenRegister: activationToken,
+                status: isDevelopment ? 1 : 0, // Auto-activate in development
             },
             transaction: t,
         });
@@ -77,11 +87,16 @@ const registerUser = async (data) => {
             }
             // Update the existing inactive user with the new password and a new token
             user.password = password; // The hook will hash this on save
-            user.tokenRegister = uuidv4();
+            user.tokenRegister = activationToken;
+            user.status = isDevelopment ? 1 : 0; // Auto-activate in development
             await user.save({ transaction: t });
         }
 
-        await emailService.sendLinkAuthenEmail({ email: user.email, userName: user.userName, token: user.tokenRegister });
+        // Send email asynchronously (even in development for testing)
+        if (activationToken) {
+            emailService.sendLinkAuthenEmail({ email: user.email, userName: user.userName, token: activationToken })
+                .catch(err => console.error('Failed to send activation email:', err.message));
+        }
         return user;
     });
 };

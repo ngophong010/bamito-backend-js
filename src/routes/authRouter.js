@@ -22,7 +22,7 @@ const router = express.Router();
 // Apply this to routes that can be abused to prevent brute-force and spam attacks.
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // Limit each IP to 10 requests per window
+  max: 100, // Limit each IP to 100 requests per window (increased for testing)
   message: { message: "Too many authentication attempts. Please try again in 15 minutes." },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -33,13 +33,16 @@ const authLimiter = rateLimit({
 
 const registerValidation = [
     body('email', 'A valid email is required').isEmail().normalizeEmail(),
-    body('password', 'Password must be at least 6 characters long').isLength({ min: 6 }),
-    body('userName', 'User name is required').not().isEmpty().trim(),
-    body('roleId', 'A numeric roleId is required').isNumeric(),
+    body('password')
+        .isLength({ min: 8 })
+        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]/)
+        .withMessage('Password must be 8+ characters with uppercase, lowercase, number, and special character'),
+    body('userName', 'User name is required').not().isEmpty().trim().isLength({ min: 3, max: 30 }),
+    body('roleId').optional().isNumeric().withMessage('roleId must be numeric if provided'),
 ];
 
 const loginValidation = [
-    body('email', 'A valid email is required').isEmail().normalizeEmail(),
+    body('identifier', 'Email or username is required').not().isEmpty().trim(),
     body('password', 'Password cannot be empty').not().isEmpty(),
 ];
 

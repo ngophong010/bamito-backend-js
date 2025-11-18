@@ -32,7 +32,10 @@ const handleRegister = asyncHandler(async (req, res) => {
       return;
     }
     await registerUser(req.body);
-    res.status(201).json({ message: "Đăng ký thành công. Vui lòng kiểm tra email để kích hoạt tài khoản." });
+    const message = process.env.NODE_ENV === 'development' 
+        ? "Đăng ký thành công! Bạn có thể đăng nhập ngay."
+        : "Đăng ký thành công. Vui lòng kiểm tra email để kích hoạt tài khoản.";
+    res.status(201).json({ message });
 });
 
 /**
@@ -45,14 +48,15 @@ const handleLogin = asyncHandler(async (req, res) => {
         res.status(400).json({ errors: errors.array() });
         return;
     }
-    const { email, password } = req.body;
-    const { user, accessToken, refreshToken } = await loginUser(email, password);
+    const { identifier, password } = req.body;
+    const { user, accessToken, refreshToken } = await loginUser(identifier, password);
     
     // Thiết lập tokens trong secure cookies
     res.cookie("access_token", accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 }); // 15 phút
     res.cookie("refresh_token", refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 }); // 7 ngày
 
-    res.status(200).json(user); // Gửi lại dữ liệu người dùng (không có mật khẩu)
+    // Return only user data (tokens are in HTTP-Only cookies)
+    res.status(200).json({ user });
 });
 
 /**
@@ -85,8 +89,11 @@ const handleLogout = asyncHandler(async (req, res) => {
 const handleRefreshToken = asyncHandler(async (req, res) => {
     const refreshToken = req.cookies.refresh_token;
 
-    // Service sẽ ném lỗi nếu token không hợp lệ, lỗi này sẽ được bắt
-    // bởi global error handler và trả về lỗi 401/403.
+    if (!refreshToken) {
+        res.status(401).json({ message: "Refresh token not found" });
+        return;
+    }
+
     const { newAccessToken } = await refreshAccessToken(refreshToken);
 
     res.cookie("access_token", newAccessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 }); // 15 phút

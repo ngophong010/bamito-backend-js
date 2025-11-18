@@ -1,16 +1,16 @@
 /**
  * @fileoverview This utility handles all email sending functionality for the application
- * using the SendGrid Web API. This is the modern, preferred approach for better
- * error handling and advanced features.
+ * using Elastic Email API. Elastic Email offers 100 emails/day free forever.
  */
 
-const sgMail = require('@sendgrid/mail');
+const axios = require('axios');
 const ejs = require('ejs');
 const path = require('path');
 const fs = require('fs');
 
-// --- 1. Configure the SendGrid SDK ---
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// --- 1. Configure Elastic Email ---
+const ELASTIC_EMAIL_API_KEY = process.env.ELASTIC_EMAIL_API_KEY;
+const ELASTIC_EMAIL_API_URL = 'https://api.elasticemail.com/v2/email/send';
 
 /**
  * @typedef {object} UserEmailData
@@ -38,22 +38,29 @@ const _renderAndSend = async (templateName, data, emailOptions) => {
         const template = fs.readFileSync(templatePath, 'utf-8');
         const html = ejs.render(template, data);
 
-        const msg = {
+        const params = new URLSearchParams({
+            apikey: ELASTIC_EMAIL_API_KEY,
+            from: process.env.EMAIL_FROM_ADDRESS,
+            fromName: process.env.EMAIL_FROM_NAME,
             to: emailOptions.to,
-            from: {
-                name: process.env.EMAIL_FROM_NAME,
-                email: process.env.EMAIL_FROM_ADDRESS,
-            },
             subject: emailOptions.subject,
-            html: html,
-        };
+            bodyHtml: html,
+            isTransactional: 'true'
+        });
 
-        await sgMail.send(msg);
-        console.log(`Email sent successfully to ${emailOptions.to}`);
+        const response = await axios.post(ELASTIC_EMAIL_API_URL, params, {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+
+        if (response.data.success) {
+            console.log(`Email sent successfully to ${emailOptions.to}`);
+        } else {
+            throw new Error(response.data.error || 'Unknown error');
+        }
     } catch (error) {
-        console.error("Error sending email via SendGrid:", error);
+        console.error("Error sending email via Elastic Email:", error.message);
         if (error.response) {
-            console.error(error.response.body);
+            console.error(error.response.data);
         }
         throw new Error(`Failed to send ${templateName} email.`);
     }
@@ -97,5 +104,5 @@ const sendOrderConfirmation = async (data) => {
 module.exports = {
     sendLinkAuthenEmail,
     sendOtpResetPassword,
-    sendOrderConfirmation, // Now correctly refactored
+    sendOrderConfirmation,
 };
